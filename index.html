@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TurboKart Arena</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+        
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #ui {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        #hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 18px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        #scoreboard {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 16px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        #lobby {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            padding: 30px;
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+            pointer-events: all;
+        }
+        
+        #lobby input, #lobby button {
+            margin: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        #lobby button {
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        
+        #lobby button:hover {
+            background: #45a049;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 24px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="loading">Loading TurboKart Arena...</div>
+        
+        <div id="lobby">
+            <h1>🚗 TurboKart Arena 🚗</h1>
+            <p>Enter your name to join the battle!</p>
+            <input type="text" id="playerName" placeholder="Your Name" maxlength="20">
+            <br>
+            <button id="joinGame">Join Game</button>
+        </div>
+        
+        <div id="ui" class="hidden">
+            <div id="hud">
+                <div>Health: <span id="health">100</span></div>
+                <div>Speed: <span id="speed">0</span> km/h</div>
+                <div>Weapon: <span id="weapon">None</span></div>
+                <div>Score: <span id="score">0</span></div>
+            </div>
+            
+            <div id="scoreboard">
+                <h3>🏆 Leaderboard</h3>
+                <div id="playersList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html> 
