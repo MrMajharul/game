@@ -38,18 +38,32 @@ export class Kart {
     }
     
     createMesh() {
-        // Create kart body
+        // Create kart body - bright purple with lime green accents
         const bodyGeometry = new THREE.BoxGeometry(2, 1, 3);
         const bodyMaterial = new THREE.MeshLambertMaterial({ 
-            color: this.isLocalPlayer ? 0x00ff00 : 0xff0000 
+            color: 0x9932CC // Bright purple
         });
         const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
         body.position.y = 0.5;
         body.castShadow = true;
         
-        // Create wheels
+        // Add lime green side panels
+        const sidePanelGeometry = new THREE.BoxGeometry(0.1, 0.8, 2.5);
+        const sidePanelMaterial = new THREE.MeshLambertMaterial({ 
+            color: 0x32CD32 // Lime green
+        });
+        
+        const leftPanel = new THREE.Mesh(sidePanelGeometry, sidePanelMaterial);
+        leftPanel.position.set(-0.9, 0.4, 0);
+        body.add(leftPanel);
+        
+        const rightPanel = new THREE.Mesh(sidePanelGeometry, sidePanelMaterial);
+        rightPanel.position.set(0.9, 0.4, 0);
+        body.add(rightPanel);
+        
+        // Create wheels with black body, white rim, and red hub
         const wheelGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.3, 8);
-        const wheelMaterial = new THREE.MeshLambertMaterial({ color: 0x333333 });
+        const wheelMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 }); // Black wheels
         
         const wheels = [];
         const wheelPositions = [
@@ -63,9 +77,24 @@ export class Kart {
             const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
             wheel.position.set(pos.x, pos.y, pos.z);
             wheel.rotation.z = Math.PI / 2;
+            wheel.rotation.x = Math.PI; // Fix upside down wheels
             wheel.castShadow = true;
             wheels.push(wheel);
             body.add(wheel);
+            
+            // Add white rim
+            const rimGeometry = new THREE.TorusGeometry(0.4, 0.1, 8, 16);
+            const rimMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+            const rim = new THREE.Mesh(rimGeometry, rimMaterial);
+            rim.rotation.x = Math.PI / 2;
+            wheel.add(rim);
+            
+            // Add red hub
+            const hubGeometry = new THREE.CylinderGeometry(0.15, 0.15, 0.35, 8);
+            const hubMaterial = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
+            const hub = new THREE.Mesh(hubGeometry, hubMaterial);
+            hub.rotation.z = Math.PI / 2;
+            wheel.add(hub);
         });
         
         // Create driver seat
@@ -123,9 +152,9 @@ export class Kart {
         }
         
         if (input.isKeyPressed('KeyA') || input.isKeyPressed('ArrowLeft')) {
-            turnDirection = -1;
+            turnDirection = 1; // Fixed: Left key now turns left
         } else if (input.isKeyPressed('KeyD') || input.isKeyPressed('ArrowRight')) {
-            turnDirection = 1;
+            turnDirection = -1; // Fixed: Right key now turns right
         }
         
         // Apply physics
@@ -138,7 +167,7 @@ export class Kart {
         // Animate wheels (simple rotation)
         this.mesh.children.forEach(child => {
             if (child.geometry.type === 'CylinderGeometry') {
-                child.rotation.x += this.velocity.length() * deltaTime * 2;
+                child.rotation.x -= this.velocity.length() * deltaTime * 2; // Fixed direction for corrected wheel orientation
             }
         });
     }
