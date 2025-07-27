@@ -104,6 +104,32 @@ export class Kart {
         seat.position.set(0, 1.25, 0);
         body.add(seat);
         
+        // Create driver with red body and white helmet with red visor
+        const driverBodyGeometry = new THREE.SphereGeometry(0.3, 8, 6);
+        const driverBodyMaterial = new THREE.MeshLambertMaterial({ color: 0xFF0000 }); // Red body
+        const driverBody = new THREE.Mesh(driverBodyGeometry, driverBodyMaterial);
+        driverBody.position.set(0, 1.8, 0);
+        body.add(driverBody);
+        
+        // Create helmet
+        const helmetGeometry = new THREE.SphereGeometry(0.25, 8, 6);
+        const helmetMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFFFF }); // White helmet
+        const helmet = new THREE.Mesh(helmetGeometry, helmetMaterial);
+        helmet.position.set(0, 2.1, 0);
+        body.add(helmet);
+        
+        // Create red visor
+        const visorGeometry = new THREE.SphereGeometry(0.2, 8, 6);
+        const visorMaterial = new THREE.MeshLambertMaterial({ 
+            color: 0xFF0000,
+            transparent: true,
+            opacity: 0.8
+        });
+        const visor = new THREE.Mesh(visorGeometry, visorMaterial);
+        visor.position.set(0, 2.1, 0.1);
+        visor.scale.set(1, 0.6, 0.3);
+        body.add(visor);
+        
         // Create steering wheel
         const steeringGeometry = new THREE.TorusGeometry(0.3, 0.1, 8, 16);
         const steeringMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
@@ -111,6 +137,29 @@ export class Kart {
         steering.position.set(0, 1.5, 0.8);
         steering.rotation.x = Math.PI / 2;
         body.add(steering);
+        
+        // Create rainbow exhaust pipe
+        const exhaustGeometry = new THREE.CylinderGeometry(0.2, 0.3, 1.5, 8);
+        const exhaustMaterial = new THREE.MeshLambertMaterial({ color: 0x0000FF }); // Start with blue
+        const exhaust = new THREE.Mesh(exhaustGeometry, exhaustMaterial);
+        exhaust.position.set(0, 0.8, -1.8);
+        exhaust.rotation.x = Math.PI / 2;
+        body.add(exhaust);
+        
+        // Add rainbow gradient effect to exhaust
+        const exhaustSegments = 8;
+        for (let i = 0; i < exhaustSegments; i++) {
+            const segmentGeometry = new THREE.CylinderGeometry(0.2, 0.2, 0.2, 8);
+            const colors = [0x0000FF, 0x8000FF, 0xFF00FF, 0xFF0080, 0xFF0000, 0xFF8000, 0xFFFF00, 0x80FF00];
+            const segmentMaterial = new THREE.MeshLambertMaterial({ color: colors[i] });
+            const segment = new THREE.Mesh(segmentGeometry, segmentMaterial);
+            segment.position.set(0, 0.8, -1.8 + (i * 0.2));
+            segment.rotation.x = Math.PI / 2;
+            body.add(segment);
+        }
+        
+        // Add smoke effect
+        this.createSmokeEffect(body);
         
         // Add name label
         const canvas = document.createElement('canvas');
@@ -136,6 +185,33 @@ export class Kart {
         this.mesh = body;
         this.mesh.position.copy(this.position);
         this.mesh.rotation.copy(this.rotation);
+    }
+    
+    createSmokeEffect(body) {
+        // Create smoke particles
+        const smokeGeometry = new THREE.SphereGeometry(0.1, 4, 4);
+        const smokeMaterial = new THREE.MeshBasicMaterial({
+            color: 0x666666,
+            transparent: true,
+            opacity: 0.6
+        });
+        
+        this.smokeParticles = [];
+        for (let i = 0; i < 10; i++) {
+            const smoke = new THREE.Mesh(smokeGeometry, smokeMaterial);
+            smoke.position.set(0, 0.8, -2.5);
+            smoke.visible = false;
+            body.add(smoke);
+            this.smokeParticles.push({
+                mesh: smoke,
+                velocity: new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.5,
+                    Math.random() * 0.3,
+                    Math.random() * 0.5
+                ),
+                life: 0
+            });
+        }
     }
     
     update(input, deltaTime) {
@@ -170,6 +246,11 @@ export class Kart {
                 child.rotation.x -= this.velocity.length() * deltaTime * 2; // Fixed direction for corrected wheel orientation
             }
         });
+        
+        // Animate smoke effect
+        if (this.smokeParticles) {
+            this.updateSmokeEffect(deltaTime);
+        }
     }
     
     applyPhysics(acceleration, turnDirection, deltaTime) {
@@ -230,6 +311,33 @@ export class Kart {
         this.rotation.copy(rotation);
         this.mesh.position.copy(this.position);
         this.mesh.rotation.copy(this.rotation);
+    }
+    
+    updateSmokeEffect(deltaTime) {
+        if (!this.smokeParticles) return;
+        
+        this.smokeParticles.forEach((particle, index) => {
+            if (this.velocity.length() > 0.1) {
+                // Show smoke when moving
+                if (!particle.mesh.visible) {
+                    particle.mesh.visible = true;
+                    particle.life = 0;
+                    particle.mesh.position.set(0, 0.8, -2.5);
+                }
+                
+                // Update smoke particle
+                particle.life += deltaTime;
+                particle.mesh.position.add(particle.velocity.clone().multiplyScalar(deltaTime));
+                particle.mesh.material.opacity = Math.max(0, 0.6 - particle.life * 0.5);
+                
+                // Reset particle when it fades out
+                if (particle.life > 1.2) {
+                    particle.mesh.visible = false;
+                }
+            } else {
+                particle.mesh.visible = false;
+            }
+        });
     }
     
     getForwardDirection() {

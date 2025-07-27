@@ -31,13 +31,17 @@ const POWER_UP_TYPES = {
     ROCKET: 'rocket',
     MINE: 'mine',
     SHIELD: 'shield',
-    SPEED_BOOST: 'speed_boost'
+    SPEED_BOOST: 'speed_boost',
+    LASER: 'laser',
+    FREEZE: 'freeze',
+    TRIPLE_SHOT: 'triple_shot',
+    TELEPORT: 'teleport'
 };
 
 // Generate random power-ups
 function generatePowerUps() {
     gameState.powerUps = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 15; i++) { // Increased number of power-ups
         gameState.powerUps.push({
             id: `powerup_${i}`,
             type: Object.values(POWER_UP_TYPES)[Math.floor(Math.random() * Object.values(POWER_UP_TYPES).length)],

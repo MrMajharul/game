@@ -36,7 +36,11 @@ export class UIManager {
             'rocket': '🚀 Rocket',
             'mine': '💣 Mine',
             'shield': '🛡️ Shield',
-            'speed_boost': '⚡ Speed Boost'
+            'speed_boost': '⚡ Speed Boost',
+            'laser': '🔴 Laser',
+            'freeze': '❄️ Freeze Ray',
+            'triple_shot': '🔥 Triple Shot',
+            'teleport': '🌀 Teleport'
         };
         return weaponNames[weaponType] || weaponType;
     }

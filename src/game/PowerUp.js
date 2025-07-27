@@ -45,6 +45,26 @@ export class PowerUp {
                 material = new THREE.MeshLambertMaterial({ color: 0xffff44 });
                 break;
                 
+            case 'laser':
+                geometry = new THREE.CylinderGeometry(0.2, 0.2, 1.2, 6);
+                material = new THREE.MeshLambertMaterial({ color: 0xff00ff });
+                break;
+                
+            case 'freeze':
+                geometry = new THREE.IcosahedronGeometry(0.6);
+                material = new THREE.MeshLambertMaterial({ color: 0x00ffff });
+                break;
+                
+            case 'triple_shot':
+                geometry = new THREE.BoxGeometry(1, 0.4, 1);
+                material = new THREE.MeshLambertMaterial({ color: 0xff8800 });
+                break;
+                
+            case 'teleport':
+                geometry = new THREE.TorusGeometry(0.6, 0.2, 8, 16);
+                material = new THREE.MeshLambertMaterial({ color: 0x8800ff });
+                break;
+                
             default:
                 geometry = new THREE.BoxGeometry(1, 1, 1);
                 material = new THREE.MeshLambertMaterial({ color: 0xffffff });
@@ -109,6 +129,10 @@ export class PowerUp {
             case 'mine': return 0x666666;
             case 'shield': return 0x6666ff;
             case 'speed_boost': return 0xffff66;
+            case 'laser': return 0xff66ff;
+            case 'freeze': return 0x66ffff;
+            case 'triple_shot': return 0xff9966;
+            case 'teleport': return 0x9966ff;
             default: return 0xffffff;
         }
     }
